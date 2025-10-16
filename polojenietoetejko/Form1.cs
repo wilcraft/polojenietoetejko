@@ -15,13 +15,13 @@ namespace polojenietoetejko
             testform.MinimizeBox = false;
             testform.ClientSize = new Size(240,210);
         }
-        public void ButtonClick(object sender, EventArgs e)
+        public async void ButtonClick(object sender, EventArgs e)
         {
             testform.Controls.Add(cbd);
             testform.ShowDialog();
             if (testform.DialogResult == DialogResult.OK)
             {
-                ServerLogic.ConnectToServer(cbd.ConnectionAddress, cbd.Port, cbd.Username);
+                await ClientLogic.ConnectToServeraAsync(cbd.ConnectionAddress, cbd.Port, cbd.Username);
                 testform.Controls.Clear();
             }
         }
@@ -29,22 +29,21 @@ namespace polojenietoetejko
         {
             ConsoleButton.Text = Utilities.ConsoleLogger();
         }
-        public void ServerButtonClick(object sender, EventArgs e)
+        public async void ServerButtonClick(object sender, EventArgs e)
         {
             testform.Controls.Add(sdb);
             testform.ShowDialog();
             if(testform.DialogResult == DialogResult.OK)
             {
-                ServerLogic.CreateServer(sdb.ServerAddress, sdb.Port);
+                await ServerLogic.CreateServer(sdb.ServerAddress, sdb.Port);
                 testform.Controls.Clear();
             }
         }
-        public void EnterKeydown(object sender, KeyEventArgs e)
+        public async void EnterKeydown(object sender, KeyEventArgs e)
         {
             if(e.KeyCode == Keys.Enter)
             {
-                ServerLogic.SendMessageAsync(messageBox.Text, cbd.Username);
-                //Console.WriteLine("boop");
+                await ClientLogic.SendMessageAsync(messageBox.Text);
                 e.Handled = true;
             }
         }
