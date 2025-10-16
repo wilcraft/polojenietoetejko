@@ -29,13 +29,13 @@ namespace polojenietoetejko
         {
             ConsoleButton.Text = Utilities.ConsoleLogger();
         }
-        public async void ServerButtonClick(object sender, EventArgs e)
+        public void ServerButtonClick(object sender, EventArgs e)
         {
             testform.Controls.Add(sdb);
             testform.ShowDialog();
             if(testform.DialogResult == DialogResult.OK)
             {
-                await ServerLogic.CreateServer(sdb.ServerAddress, sdb.Port);
+                ServerLogic.CreateServer(sdb.ServerAddress, sdb.Port);
                 testform.Controls.Clear();
             }
         }
