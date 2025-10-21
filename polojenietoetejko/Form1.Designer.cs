@@ -29,18 +29,15 @@
         private void InitializeComponent()
         {
             button1 = new Button();
-            label1 = new Label();
-            label2 = new Label();
-            label3 = new Label();
             ConsoleButton = new Button();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
-            listBox1 = new ListBox();
             messageBox = new TextBox();
             tabPage2 = new TabPage();
             label5 = new Label();
             button2 = new Button();
             label4 = new Label();
+            richTextBox1 = new RichTextBox();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
@@ -48,40 +45,13 @@
             // 
             // button1
             // 
-            button1.Location = new Point(224, 92);
+            button1.Location = new Point(400, 311);
             button1.Name = "button1";
             button1.Size = new Size(75, 23);
             button1.TabIndex = 0;
             button1.Text = "Connect";
             button1.UseVisualStyleBackColor = true;
             button1.Click += ButtonClick;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(143, 22);
-            label1.Name = "label1";
-            label1.Size = new Size(38, 15);
-            label1.TabIndex = 1;
-            label1.Text = "label1";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(143, 54);
-            label2.Name = "label2";
-            label2.Size = new Size(38, 15);
-            label2.TabIndex = 2;
-            label2.Text = "label2";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(143, 92);
-            label3.Name = "label3";
-            label3.Size = new Size(38, 15);
-            label3.TabIndex = 3;
-            label3.Text = "label3";
             // 
             // ConsoleButton
             // 
@@ -105,12 +75,9 @@
             // 
             // tabPage1
             // 
-            tabPage1.Controls.Add(listBox1);
+            tabPage1.Controls.Add(richTextBox1);
             tabPage1.Controls.Add(messageBox);
             tabPage1.Controls.Add(button1);
-            tabPage1.Controls.Add(label2);
-            tabPage1.Controls.Add(label3);
-            tabPage1.Controls.Add(label1);
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
@@ -119,17 +86,9 @@
             tabPage1.Text = "tabPage1";
             tabPage1.UseVisualStyleBackColor = true;
             // 
-            // listBox1
-            // 
-            listBox1.FormattingEnabled = true;
-            listBox1.Location = new Point(472, 87);
-            listBox1.Name = "listBox1";
-            listBox1.Size = new Size(120, 94);
-            listBox1.TabIndex = 5;
-            // 
             // messageBox
             // 
-            messageBox.Location = new Point(472, 187);
+            messageBox.Location = new Point(363, 185);
             messageBox.Name = "messageBox";
             messageBox.Size = new Size(100, 23);
             messageBox.TabIndex = 4;
@@ -177,6 +136,14 @@
             label4.TabIndex = 5;
             label4.Text = "Open/Close Console";
             // 
+            // richTextBox1
+            // 
+            richTextBox1.Location = new Point(363, 54);
+            richTextBox1.Name = "richTextBox1";
+            richTextBox1.Size = new Size(100, 96);
+            richTextBox1.TabIndex = 5;
+            richTextBox1.Text = "";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -196,9 +163,6 @@
         #endregion
 
         private Button button1;
-        private Label label1;
-        private Label label2;
-        private Label label3;
         private Button ConsoleButton;
         private TabControl tabControl1;
         private TabPage tabPage1;
@@ -206,7 +170,7 @@
         private Label label4;
         private Label label5;
         private Button button2;
-        private ListBox listBox1;
         private TextBox messageBox;
+        private RichTextBox richTextBox1;
     }
 }

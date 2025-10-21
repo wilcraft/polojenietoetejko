@@ -7,13 +7,14 @@ namespace polojenietoetejko
         ConnectionDialogBox cbd = new();
         ServerDialogBox sdb = new();
         Form testform = new();
+        internal string username = string.Empty;
         public Form1()
         {
             InitializeComponent();
             testform.FormBorderStyle = FormBorderStyle.FixedDialog;
             testform.MaximizeBox = false;
             testform.MinimizeBox = false;
-            testform.ClientSize = new Size(240,210);
+            testform.ClientSize = new Size(240, 210);
         }
         public async void ButtonClick(object sender, EventArgs e)
         {
@@ -21,7 +22,8 @@ namespace polojenietoetejko
             testform.ShowDialog();
             if (testform.DialogResult == DialogResult.OK)
             {
-                await ClientLogic.ConnectToServeraAsync(cbd.ConnectionAddress, cbd.Port, cbd.Username);
+                await Client.ConnectToServerAsync(cbd.ConnectionAddress, cbd.Username.Trim());
+                username = cbd.Username;
                 testform.Controls.Clear();
             }
         }
@@ -33,17 +35,18 @@ namespace polojenietoetejko
         {
             testform.Controls.Add(sdb);
             testform.ShowDialog();
-            if(testform.DialogResult == DialogResult.OK)
+            if (testform.DialogResult == DialogResult.OK)
             {
-                ServerLogic.CreateServer(sdb.ServerAddress, sdb.Port);
+                Server server = new Server(sdb.ServerAddress);
+                server.CreateServer();
                 testform.Controls.Clear();
             }
         }
         public async void EnterKeydown(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Enter)
             {
-                await ClientLogic.SendMessageAsync(messageBox.Text);
+                await Client.Instance.SendMessageAsync(messageBox.Text);
                 e.Handled = true;
             }
         }

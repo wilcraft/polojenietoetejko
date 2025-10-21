@@ -33,7 +33,7 @@ namespace polojenietoetejko
             username = usernameTextbox.Text;
             string temp = connectionTextbox.Text;
 
-            connectionAddress = temp.Split(':').First();
+            connectionAddress = connectionTextbox.Text;
             port = temp.Split(":").Last();
 
             usernameTextbox.Text = string.Empty;
