@@ -28,8 +28,19 @@ namespace polojenietoetejko
         public bool RemoveClient(string username)
         {
             Client client = GetClient(username);
-            client.DisconnectClient();
-            return clients.TryRemove(username, out _);
+            if(client == null)
+            {
+                return false;
+            }
+            if (client.UserClient.Connected)
+            {
+                client.DisconnectClient();
+                return clients.TryRemove(username, out _);
+            }
+            else
+            {
+                return clients.TryRemove(username, out _);
+            }
         }
 
         public Client GetClient(string username)

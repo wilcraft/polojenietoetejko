@@ -104,7 +104,7 @@ namespace polojenietoetejko
             }
             catch (IOException e)
             {
-                return e.ToString();
+                return null;
             }
         }
         public async Task SendMessageAsync(string message)
