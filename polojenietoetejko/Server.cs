@@ -77,7 +77,9 @@ namespace polojenietoetejko
                     string message = await client.ReadMessageAsync();
                     if (message == null || message.Equals("DISCONNECT"))
                     {
+                        
                         Console.WriteLine($"{client.Username} Disconnected");
+                        await client.UserClient.GetStream().WriteAsync(Encoding.UTF8.GetBytes(message), 0, message.Length);
                         ClientManager.Instance.RemoveClient(client.Username);
                         break;
                     }

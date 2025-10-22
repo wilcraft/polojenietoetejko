@@ -98,7 +98,10 @@ namespace polojenietoetejko
                 {
                     return null;
                 }
-
+                if (Encoding.UTF8.GetString(buffer, 0, buffer.Length).Equals("DISCONNECT"))
+                {
+                    this.DisconnectClient();
+                }
                 return Encoding.UTF8.GetString(buffer, 0, bytesRead);
             }
             catch (IOException e)

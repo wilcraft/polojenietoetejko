@@ -34,8 +34,7 @@ namespace polojenietoetejko
             }
             if (client.UserClient.Connected)
             {
-                client.DisconnectClient();
-                //Client.Reset();
+                client.UserClient.Close();
                 return clients.TryRemove(username, out _);
             }
             else
