@@ -22,6 +22,11 @@ namespace polojenietoetejko
         ConcurrentDictionary<Client, DateTime> lastHeartbeat = new();
         public Server(string ipAddress, Form1 form)
         {
+            string defaultIP = "0.0.0.0:25565";
+            if (string.IsNullOrEmpty(ipAddress))
+            {
+                ipAddress = defaultIP;
+            }
             address = IPAddress.Parse(ipAddress.Split(':').First());
             if(!int.TryParse(ipAddress.Split(":").Last(), out port)){
                 throw new Exception("greshka");
@@ -58,6 +63,8 @@ namespace polojenietoetejko
                         Console.WriteLine($"Handshake Successful!: {username}");
                         Console.WriteLine(ClientManager.Instance.GetHashCode());
                         var client = ClientManager.Instance.GetClient(username);
+                        byte[] returnHandshake = Encoding.UTF8.GetBytes("HANDSHAKE_OK");
+                        await client.UserClient.GetStream().WriteAsync(returnHandshake, 0, returnHandshake.Length);
                         _ = Task.Run(() => HandleClientAsync(client));
                     }
                 }
@@ -73,17 +80,19 @@ namespace polojenietoetejko
         }
         private async Task HandleClientAsync(Client client)
         {
+            byte[] buffer = new byte[1024]; 
             Console.WriteLine($"Client Connected: {client.Username}");
             try
             {
-                while (true)
+                while (client.UserClient.Connected)
                 {
-                    string message = await client.ReadMessageAsync();
+                    int bytesRead = await client.UserClient.GetStream().ReadAsync(buffer,0,buffer.Length);
+                    string message = Encoding.UTF8.GetString(buffer,0, bytesRead);
                     if (message == null || message.Equals("DISCONNECT"))
                     {
                         Console.WriteLine($"{client.Username} Disconnected");
                         Console.WriteLine($"Sending DISCONNECT to {client.iPAddress}");
-                        await client.UserClient.GetStream().WriteAsync(Encoding.UTF8.GetBytes(message), 0, message.Length);
+                        SendMessageToClient(client, message);
                         ClientManager.Instance.RemoveClient(client.Username);
                         break;
                     }
@@ -95,7 +104,7 @@ namespace polojenietoetejko
                     else
                     {
                         form.UpdateChatBox($"{DateTime.Now:HH:mm} {client.Username}: {message}");
-                        Console.WriteLine($"{client.Username}: {message}");
+                        SendMessageToClient(client,$"{client.iPAddress} {message} SENT");
                     }
                 }
             }
@@ -105,23 +114,19 @@ namespace polojenietoetejko
                 throw;
             }
         }
-        private async Task HandleReconnect(Client client)
+        private void SendMessageToClient(Client client, string message)
         {
-            string IPAddress = $"{remoteEndPoint.Address}:{remoteEndPoint.Port}";
-            while (!client.UserClient.Connected)
+            try
             {
-                try
-                {
-                    await Client.ConnectToServerAsync(IPAddress,client.Username);
-                    Console.WriteLine($"{client.Username} Reconnected");
-                }
-                catch
-                {
-                    Console.WriteLine("Reconnect attempt failed");
-                    await Task.Delay(5000);
-                }
+                NetworkStream stream = client.UserClient.GetStream();
+                byte[] data = Encoding.UTF8.GetBytes(message);
+                stream.WriteAsync(data, 0, data.Length);
             }
-        } 
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
         
         private void HeartbeatCheck(object sender, ElapsedEventArgs e)
         {

@@ -74,8 +74,21 @@ namespace polojenietoetejko
                 {
                     NetworkStream stream = client.GetStream();
                     handshake = $"HANDSHAKE:{username}";
-                    await stream.WriteAsync(Encoding.UTF8.GetBytes(handshake));
-                    Initialize(username, client, GetAddress());
+                    await stream.WriteAsync(Encoding.UTF8.GetBytes(handshake),0,handshake.Length);
+                    byte[] tempBuffer = new byte[1024];
+                    int tempBytesRead = await stream.ReadAsync(tempBuffer,0,tempBuffer.Length);
+                    string serverResponse = Encoding.UTF8.GetString(tempBuffer,0,tempBytesRead).Trim();
+                    if (serverResponse.Equals("HANDSHAKE_OK"))
+                    {
+                        Initialize(username, client, GetAddress());
+                        
+                        _ = Task.Run(() => Instance.ReadMessageAsync());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Handshake Failed!");
+                        client.Close();
+                    }
                 }
             }
             catch (SocketException ex)
@@ -88,28 +101,31 @@ namespace polojenietoetejko
             this.client.Close();
             this.Reset();
         }
-        public async Task<String> ReadMessageAsync()
+        public async Task ReadMessageAsync()
         {
             NetworkStream stream = this.client.GetStream();
             var buffer = new byte[1024];
-
-            try
+            while (this.client.Connected)
             {
-                int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
-                if(bytesRead == 0)
+                try
                 {
-                    return null;
+                    int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+                    if (bytesRead == 0)
+                    {
+                        break;
+                    }
+                    string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                    if (message.Equals("DISCONNECT"))
+                    {
+                        this.DisconnectClient();
+                    }
+                    Console.WriteLine(message);
+                    
                 }
-                string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                if (message.Equals("DISCONNECT"))
+                catch (IOException e)
                 {
-                    this.DisconnectClient();
+                    
                 }
-                return message;
-            }
-            catch (IOException e)
-            {
-                return null;
             }
         }
         public async Task SendMessageAsync(string message)
