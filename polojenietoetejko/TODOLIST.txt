@@ -3,3 +3,7 @@
 3. da namestq butonite
 4. POSSIBLY da sloja buton da se vijdat vsichki connected clienti
 5. da razdelq servera i clienta na otdelni proekti?
+
+IMPORTANT
+
+OPRAVI EVENT HANDLERA I GUI UPDATE LAINATA 22/10/25

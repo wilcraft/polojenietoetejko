@@ -23,6 +23,7 @@ namespace polojenietoetejko
         private TcpClient client;
         private IPAddress address;
         private Timer heartbeatClientsideTimer;
+        public event Action<string> MessageReceived;
         internal Client(string username, TcpClient client, IPAddress address)
         {
             this.username = username;
@@ -81,7 +82,7 @@ namespace polojenietoetejko
                     if (serverResponse.Equals("HANDSHAKE_OK"))
                     {
                         Initialize(username, client, GetAddress());
-                        
+                        Instance.MessageReceived += text =>
                         _ = Task.Run(() => Instance.ReadMessageAsync());
                     }
                     else
@@ -101,6 +102,7 @@ namespace polojenietoetejko
             this.client.Close();
             this.Reset();
         }
+        protected void onMessageReceived(string text) => MessageReceived.Invoke(text);
         public async Task ReadMessageAsync()
         {
             NetworkStream stream = this.client.GetStream();
@@ -119,6 +121,8 @@ namespace polojenietoetejko
                     {
                         this.DisconnectClient();
                     }
+                    onMessageReceived($"{DateTime.Now:HH:mm} {Instance.Username}: {message}");
+                    //form.UpdateChatBox();
                     Console.WriteLine(message);
                     
                 }

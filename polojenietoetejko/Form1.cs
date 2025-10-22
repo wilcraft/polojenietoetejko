@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace polojenietoetejko
 {
@@ -88,16 +89,31 @@ namespace polojenietoetejko
                 e.Handled = true;
             }
         }
+        private void ClientHandler()
+        {
+            Client.Instance.MessageReceived += text =>
+            {
+                if (this.InvokeRequired)
+                {
+                    this.BeginInvoke(new Action(() => UpdateChatBox(text + "\n")));
+                }
+                else
+                {
+                    UpdateChatBox(text + "\n");
+                }
+            };
+        }
         public void UpdateChatBox(string message)
         {
-            if (chatHistoryRCTB.InvokeRequired)
-            {
-                chatHistoryRCTB.BeginInvoke(new Action(() => chatHistoryRCTB.Text += message + "\n"));
-            }
-            else
-            {
-                chatHistoryRCTB.Text += message;
-            }
+            //if (chatHistoryRCTB.InvokeRequired)
+            //{
+            //    chatHistoryRCTB.BeginInvoke(new Action(() => chatHistoryRCTB.Text += message + "\n"));
+            //}
+            //else
+            //{
+            //    chatHistoryRCTB.Text += message;
+            //}
+            chatHistoryRCTB.Text += message;
         }
     }
 }

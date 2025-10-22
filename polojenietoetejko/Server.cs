@@ -103,7 +103,7 @@ namespace polojenietoetejko
                     }
                     else
                     {
-                        form.UpdateChatBox($"{DateTime.Now:HH:mm} {client.Username}: {message}");
+                        //form.UpdateChatBox($"{DateTime.Now:HH:mm} {client.Username}: {message}");
                         SendMessageToClient(client,$"{client.iPAddress} {message} SENT");
                     }
                 }
