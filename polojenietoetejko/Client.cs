@@ -21,7 +21,6 @@ namespace polojenietoetejko
         private TcpClient client;
         private IPAddress address;
         private Timer heartbeatClientsideTimer;
-        public Client() { }
         internal Client(string username, TcpClient client)
         {
             this.username = username;
@@ -39,7 +38,7 @@ namespace polojenietoetejko
                 instance = new Client(username,client);
             }
         }
-        public static void Reset()
+        public void Reset()
         {
             instance = null;
         }
@@ -85,6 +84,7 @@ namespace polojenietoetejko
         public void DisconnectClient()
         {
             this.client.Close();
+            this.Reset();
         }
         public async Task<String> ReadMessageAsync()
         {
