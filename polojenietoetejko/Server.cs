@@ -1,11 +1,14 @@
 ﻿using System;
 using System.CodeDom.Compiler;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace polojenietoetejko
 {
@@ -15,6 +18,8 @@ namespace polojenietoetejko
         private IPAddress address;
         private int port;
         private IPEndPoint remoteEndPoint;
+
+        ConcurrentDictionary<Client, DateTime> lastHeartbeat = new();
         public Server(string ipAddress, Form1 form)
         {
             address = IPAddress.Parse(ipAddress.Split(':').First());
@@ -23,6 +28,12 @@ namespace polojenietoetejko
             }
             remoteEndPoint = new IPEndPoint(address, port);
             this.form = form;
+
+            Timer clientTimeoutMonitor = new Timer(10000);
+            clientTimeoutMonitor.Elapsed += HeartbeatCheck;
+            clientTimeoutMonitor.AutoReset = true;
+            clientTimeoutMonitor.Start();
+
         }
         public async Task CreateServer()
         { 
@@ -65,19 +76,38 @@ namespace polojenietoetejko
                 while (true)
                 {
                     string message = await client.ReadMessageAsync();
-                    if(message == null)
+                    if (message == null)
                     {
                         ClientManager.Instance.RemoveClient(client.Username);
                         break;
                     }
-                    form.UpdateChatBox($"{DateTime.Now:HH:mm} {client.Username}: {message}");
-                    Console.WriteLine($"{client.Username}: {message}");
+                    if (message.Equals("PING"))
+                    {
+                        lastHeartbeat[client] = DateTime.Now;
+                        Console.WriteLine($"Received: {client.Username}");
+                    }
+                    else
+                    {
+                        form.UpdateChatBox($"{DateTime.Now:HH:mm} {client.Username}: {message}");
+                        Console.WriteLine($"{client.Username}: {message}");
+                    }
                 }
             }
             catch(Exception)
             {
                 ClientManager.Instance.RemoveClient(client.Username);
                 throw;
+            }
+        }
+        
+        private void HeartbeatCheck(object sender, ElapsedEventArgs e)
+        {
+            foreach(var kvp in lastHeartbeat)
+            {
+                if((DateTime.Now - kvp.Value).TotalSeconds > 15)
+                {
+                    ClientManager.Instance.RemoveClient(kvp.Key.Username);
+                }
             }
         }
     }

@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
+using Timer = System.Timers.Timer;
+
 
 namespace polojenietoetejko
 {
@@ -16,12 +20,18 @@ namespace polojenietoetejko
         private string username;
         private TcpClient client;
         private IPAddress address;
+        private Timer heartbeatClientsideTimer;
         public Client() { }
         internal Client(string username, TcpClient client)
         {
             this.username = username;
             this.client = client;
             this.address = GetAddress();
+
+            heartbeatClientsideTimer = new(5000);
+            heartbeatClientsideTimer.Elapsed += PingServer;
+            heartbeatClientsideTimer.AutoReset = true;
+            heartbeatClientsideTimer.Start();
         }
         public static void Initialize(string username, TcpClient client)
         {
@@ -73,6 +83,10 @@ namespace polojenietoetejko
                 Console.WriteLine(ex.Message);
             }
         }
+        public void DisconnectClient()
+        {
+            this.client.Close();
+        }
         public async Task<String> ReadMessageAsync()
         {
             NetworkStream stream = this.client.GetStream();
@@ -103,7 +117,21 @@ namespace polojenietoetejko
             }
             
         }
+        public void PingServer(object sender, ElapsedEventArgs e)
+        {
+            try
+            {
+                NetworkStream stream = this.client.GetStream();
+                byte[] pingMessage = Encoding.UTF8.GetBytes("PING");
+                stream.WriteAsync(pingMessage, 0, pingMessage.Length);
+            }
+            catch
+            {
+                heartbeatClientsideTimer.Stop();
+            }
+        }
         public string Username { get { return username; } }
+        public TcpClient UserClient { get { return client; } }
         public static Client Instance { get { return instance; } }
     }
 }

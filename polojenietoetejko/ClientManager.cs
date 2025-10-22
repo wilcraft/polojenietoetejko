@@ -10,7 +10,7 @@ namespace polojenietoetejko
 {
     internal class ClientManager
     {
-        //mrazq singletoni tolkova mnogo </3
+        //pisna mi chestno
         private static readonly ClientManager instance = new();
 
         private readonly ConcurrentDictionary<string, Client> clients = new();
@@ -27,6 +27,8 @@ namespace polojenietoetejko
 
         public bool RemoveClient(string username)
         {
+            Client client = GetClient(username);
+            client.DisconnectClient();
             return clients.TryRemove(username, out _);
         }
 
