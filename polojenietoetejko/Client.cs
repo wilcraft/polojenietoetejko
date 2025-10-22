@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows.Forms;
 using Timer = System.Timers.Timer;
 
 
@@ -98,11 +100,12 @@ namespace polojenietoetejko
                 {
                     return null;
                 }
-                if (Encoding.UTF8.GetString(buffer, 0, buffer.Length).Equals("DISCONNECT"))
+                string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                if (message.Equals("DISCONNECT"))
                 {
                     this.DisconnectClient();
                 }
-                return Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                return message;
             }
             catch (IOException e)
             {
