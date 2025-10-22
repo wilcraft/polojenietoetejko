@@ -31,7 +31,6 @@ namespace polojenietoetejko
 
             Timer clientTimeoutMonitor = new Timer(10000);
             clientTimeoutMonitor.Elapsed += HeartbeatCheck;
-            clientTimeoutMonitor.AutoReset = true;
             clientTimeoutMonitor.Start();
 
         }
@@ -76,8 +75,9 @@ namespace polojenietoetejko
                 while (true)
                 {
                     string message = await client.ReadMessageAsync();
-                    if (message == null)
+                    if (message == null || message.Equals("DISCONNECT"))
                     {
+                        Console.WriteLine($"{client.Username} Disconnected");
                         ClientManager.Instance.RemoveClient(client.Username);
                         break;
                     }
@@ -99,6 +99,23 @@ namespace polojenietoetejko
                 throw;
             }
         }
+        private async Task HandleReconnect(Client client)
+        {
+            string IPAddress = $"{remoteEndPoint.Address}:{remoteEndPoint.Port}";
+            while (!client.UserClient.Connected)
+            {
+                try
+                {
+                    await Client.ConnectToServerAsync(IPAddress,client.Username);
+                    Console.WriteLine($"{client.Username} Reconnected");
+                }
+                catch
+                {
+                    Console.WriteLine("Reconnect attempt failed");
+                    await Task.Delay(5000);
+                }
+            }
+        } 
         
         private void HeartbeatCheck(object sender, ElapsedEventArgs e)
         {

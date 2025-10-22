@@ -8,6 +8,9 @@ namespace polojenietoetejko
         ServerDialogBox sdb = new();
         Form testform = new();
         internal string username = string.Empty;
+        internal string connectionAddress = string.Empty;
+        private bool isConnected = false;
+        private bool clientCreated = false;
         public Form1()
         {
             InitializeComponent();
@@ -19,13 +22,37 @@ namespace polojenietoetejko
         public async void ButtonClick(object sender, EventArgs e)
         {
             testform.Controls.Add(cbd);
-            testform.ShowDialog();
-            if (testform.DialogResult == DialogResult.OK)
+            if (!isConnected && !clientCreated)
             {
-                await Client.ConnectToServerAsync(cbd.ConnectionAddress, cbd.Username.Trim());
-                username = cbd.Username;
-                testform.Controls.Clear();
+                testform.ShowDialog();
+                if (testform.DialogResult == DialogResult.OK)
+                {
+                    await Client.ConnectToServerAsync(cbd.ConnectionAddress, cbd.Username.Trim());
+                    username = cbd.Username;
+                    connectionAddress = cbd.ConnectionAddress;
+                    isConnected = true;
+                    clientCreated = true;
+                    button1.Text = "Disconnect";
+                    testform.Controls.Clear();
+                }
+                else
+                {
+                    testform.Controls.Remove(cbd);
+                }
             }
+            else if (isConnected && clientCreated)
+            {
+                await Client.Instance.SendMessageAsync("DISCONNECT");
+                isConnected = false;
+                button1.Text = "Reconnect";
+            }
+            else if (!isConnected && clientCreated)
+            {
+                await Client.ConnectToServerAsync(connectionAddress, username);
+                button1.Text = "Disconnect";
+                isConnected = true;
+            }
+                
         }
         public void ConsoleButtonClick(object sender, EventArgs e)
         {
@@ -41,12 +68,23 @@ namespace polojenietoetejko
                 server.CreateServer();
                 testform.Controls.Clear();
             }
+            else
+            {
+                testform.Controls.Remove(sdb);
+            }
         }
         public async void EnterKeydown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                await Client.Instance.SendMessageAsync(messageBox.Text);
+                if (isConnected)
+                {
+                    await Client.Instance.SendMessageAsync(messageBox.Text);
+                }
+                else
+                {
+                    return;
+                }
                 e.Handled = true;
             }
         }

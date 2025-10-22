@@ -1,4 +1,4 @@
-﻿1. Clienta/ite da vijdat suobshteniqta vuv formata
+﻿1. Clienta/ite da vijdat suobshteniqta vuv formata - DONE
 2. da opravq the pages part ot tabpage komponenta
 3. da namestq butonite
 4. POSSIBLY da sloja buton da se vijdat vsichki connected clienti

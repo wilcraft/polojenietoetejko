@@ -30,7 +30,6 @@ namespace polojenietoetejko
 
             heartbeatClientsideTimer = new(5000);
             heartbeatClientsideTimer.Elapsed += PingServer;
-            heartbeatClientsideTimer.AutoReset = true;
             heartbeatClientsideTimer.Start();
         }
         public static void Initialize(string username, TcpClient client)
