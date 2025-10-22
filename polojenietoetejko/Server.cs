@@ -54,7 +54,7 @@ namespace polojenietoetejko
                     if (handshakeMessage.StartsWith("HANDSHAKE:"))
                     {
                         string username = handshakeMessage.Substring("HANDSHAKE:".Length).Trim().ToLower();
-                        ClientManager.Instance.AddClient(username, tempTcpClient);
+                        ClientManager.Instance.AddClient(username, tempTcpClient, GetClientIP(tempTcpClient));
                         Console.WriteLine($"Handshake Successful!: {username}");
                         Console.WriteLine(ClientManager.Instance.GetHashCode());
                         var client = ClientManager.Instance.GetClient(username);
@@ -67,6 +67,10 @@ namespace polojenietoetejko
                 listener.Stop();
             }
         }
+        private IPAddress GetClientIP(TcpClient client)
+        {
+            return ((IPEndPoint)client.Client.RemoteEndPoint).Address;
+        }
         private async Task HandleClientAsync(Client client)
         {
             Console.WriteLine($"Client Connected: {client.Username}");
@@ -78,6 +82,7 @@ namespace polojenietoetejko
                     if (message == null || message.Equals("DISCONNECT"))
                     {
                         Console.WriteLine($"{client.Username} Disconnected");
+                        Console.WriteLine($"Sending DISCONNECT to {client.iPAddress}");
                         await client.UserClient.GetStream().WriteAsync(Encoding.UTF8.GetBytes(message), 0, message.Length);
                         ClientManager.Instance.RemoveClient(client.Username);
                         break;

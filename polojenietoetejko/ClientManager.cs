@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace polojenietoetejko
         private static readonly ClientManager instance = new();
 
         private readonly ConcurrentDictionary<string, Client> clients = new();
-        public bool AddClient(string username, TcpClient client)
+        public bool AddClient(string username, TcpClient client, IPAddress address)
         {
             if (clients.ContainsKey(username))
             {
@@ -22,7 +23,7 @@ namespace polojenietoetejko
             }           
             Console.WriteLine($"Client Added {username}");
             
-            return clients.TryAdd(username, new Client(username, client));
+            return clients.TryAdd(username, new Client(username, client, address));
         }
 
         public bool RemoveClient(string username)

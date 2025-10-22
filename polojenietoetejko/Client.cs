@@ -23,28 +23,28 @@ namespace polojenietoetejko
         private TcpClient client;
         private IPAddress address;
         private Timer heartbeatClientsideTimer;
-        internal Client(string username, TcpClient client)
+        internal Client(string username, TcpClient client, IPAddress address)
         {
             this.username = username;
             this.client = client;
-            this.address = GetAddress();
+            this.address = address;
 
             heartbeatClientsideTimer = new(5000);
             heartbeatClientsideTimer.Elapsed += PingServer;
             heartbeatClientsideTimer.Start();
         }
-        public static void Initialize(string username, TcpClient client)
+        public static void Initialize(string username, TcpClient client, IPAddress address)
         {
             if (instance == null)
             {
-                instance = new Client(username,client);
+                instance = new Client(username,client,address);
             }
         }
         public void Reset()
         {
             instance = null;
         }
-        private IPAddress GetAddress()
+        private static IPAddress GetAddress()
         {
             var host = Dns.GetHostEntry(Dns.GetHostName());
             foreach(var ip in host.AddressList)
@@ -75,7 +75,7 @@ namespace polojenietoetejko
                     NetworkStream stream = client.GetStream();
                     handshake = $"HANDSHAKE:{username}";
                     await stream.WriteAsync(Encoding.UTF8.GetBytes(handshake));
-                    Initialize(username, client);
+                    Initialize(username, client, GetAddress());
                 }
             }
             catch (SocketException ex)
@@ -137,6 +137,7 @@ namespace polojenietoetejko
         }
         public string Username { get { return username; } }
         public TcpClient UserClient { get { return client; } }
+        public IPAddress iPAddress { get { return address; } }
         public static Client Instance { get { return instance; } }
     }
 }
