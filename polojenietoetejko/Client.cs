@@ -101,6 +101,7 @@ namespace polojenietoetejko
                 byte[] data = Encoding.UTF8.GetBytes(message);
                 await stream.WriteAsync(data, 0, data.Length);
             }
+            
         }
         public string Username { get { return username; } }
         public static Client Instance { get { return instance; } }

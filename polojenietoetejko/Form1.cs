@@ -37,7 +37,7 @@ namespace polojenietoetejko
             testform.ShowDialog();
             if (testform.DialogResult == DialogResult.OK)
             {
-                Server server = new Server(sdb.ServerAddress);
+                Server server = new Server(sdb.ServerAddress, this);
                 server.CreateServer();
                 testform.Controls.Clear();
             }
@@ -48,6 +48,17 @@ namespace polojenietoetejko
             {
                 await Client.Instance.SendMessageAsync(messageBox.Text);
                 e.Handled = true;
+            }
+        }
+        public void UpdateChatBox(string message)
+        {
+            if (chatHistoryRCTB.InvokeRequired)
+            {
+                chatHistoryRCTB.BeginInvoke(new Action(() => chatHistoryRCTB.Text += message + "\n"));
+            }
+            else
+            {
+                chatHistoryRCTB.Text += message;
             }
         }
     }

@@ -11,17 +11,18 @@ namespace polojenietoetejko
 {
     internal class Server
     {
+        private Form1 form;
         private IPAddress address;
         private int port;
         private IPEndPoint remoteEndPoint;
-        public Server(string ipAddress)
+        public Server(string ipAddress, Form1 form)
         {
             address = IPAddress.Parse(ipAddress.Split(':').First());
             if(!int.TryParse(ipAddress.Split(":").Last(), out port)){
                 throw new Exception("greshka");
             }
             remoteEndPoint = new IPEndPoint(address, port);
-            
+            this.form = form;
         }
         public async Task CreateServer()
         { 
@@ -69,6 +70,7 @@ namespace polojenietoetejko
                         ClientManager.Instance.RemoveClient(client.Username);
                         break;
                     }
+                    form.UpdateChatBox($"{DateTime.Now:HH:mm} {client.Username}: {message}");
                     Console.WriteLine($"{client.Username}: {message}");
                 }
             }

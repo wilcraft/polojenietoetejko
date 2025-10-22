@@ -32,12 +32,12 @@
             ConsoleButton = new Button();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
+            chatHistoryRCTB = new RichTextBox();
             messageBox = new TextBox();
             tabPage2 = new TabPage();
             label5 = new Label();
             button2 = new Button();
             label4 = new Label();
-            richTextBox1 = new RichTextBox();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
@@ -75,7 +75,7 @@
             // 
             // tabPage1
             // 
-            tabPage1.Controls.Add(richTextBox1);
+            tabPage1.Controls.Add(chatHistoryRCTB);
             tabPage1.Controls.Add(messageBox);
             tabPage1.Controls.Add(button1);
             tabPage1.Location = new Point(4, 24);
@@ -85,6 +85,14 @@
             tabPage1.TabIndex = 0;
             tabPage1.Text = "tabPage1";
             tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // chatHistoryRCTB
+            // 
+            chatHistoryRCTB.Location = new Point(363, 54);
+            chatHistoryRCTB.Name = "chatHistoryRCTB";
+            chatHistoryRCTB.Size = new Size(100, 96);
+            chatHistoryRCTB.TabIndex = 5;
+            chatHistoryRCTB.Text = "";
             // 
             // messageBox
             // 
@@ -136,14 +144,6 @@
             label4.TabIndex = 5;
             label4.Text = "Open/Close Console";
             // 
-            // richTextBox1
-            // 
-            richTextBox1.Location = new Point(363, 54);
-            richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(100, 96);
-            richTextBox1.TabIndex = 5;
-            richTextBox1.Text = "";
-            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -171,6 +171,6 @@
         private Label label5;
         private Button button2;
         private TextBox messageBox;
-        private RichTextBox richTextBox1;
+        private RichTextBox chatHistoryRCTB;
     }
 }
