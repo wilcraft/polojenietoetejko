@@ -36,10 +36,7 @@ namespace polojenietoetejko
         }
         public static void Initialize(string username, TcpClient client, IPAddress address)
         {
-            if (instance == null)
-            {
-                instance = new Client(username,client,address);
-            }
+            instance = new Client(username,client,address);
         }
         public void Reset()
         {
@@ -82,7 +79,7 @@ namespace polojenietoetejko
                     if (serverResponse.Equals("HANDSHAKE_OK"))
                     {
                         Initialize(username, client, GetAddress());
-                        Instance.MessageReceived += text =>
+                        //Instance.MessageReceived += text =>
                         _ = Task.Run(() => Instance.ReadMessageAsync());
                     }
                     else
@@ -99,6 +96,7 @@ namespace polojenietoetejko
         }
         public void DisconnectClient()
         {
+            this.heartbeatClientsideTimer.Close();
             this.client.Close();
             this.Reset();
         }
@@ -120,11 +118,12 @@ namespace polojenietoetejko
                     if (message.Equals("DISCONNECT"))
                     {
                         this.DisconnectClient();
+                    }else if (!message.Equals("PING"))
+                    {
+                        onMessageReceived($"{DateTime.Now:HH:mm} {message}");
                     }
-                    onMessageReceived($"{DateTime.Now:HH:mm} {Instance.Username}: {message}");
                     //form.UpdateChatBox();
-                    Console.WriteLine(message);
-                    
+
                 }
                 catch (IOException e)
                 {

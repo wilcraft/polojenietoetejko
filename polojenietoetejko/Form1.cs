@@ -29,6 +29,7 @@ namespace polojenietoetejko
                 if (testform.DialogResult == DialogResult.OK)
                 {
                     await Client.ConnectToServerAsync(cbd.ConnectionAddress, cbd.Username.Trim());
+                    ClientHandler();
                     username = cbd.Username;
                     connectionAddress = cbd.ConnectionAddress;
                     isConnected = true;
@@ -50,6 +51,7 @@ namespace polojenietoetejko
             else if (!isConnected && clientCreated)
             {
                 await Client.ConnectToServerAsync(connectionAddress, username);
+                ClientHandler();
                 button1.Text = "Disconnect";
                 isConnected = true;
             }
@@ -113,7 +115,7 @@ namespace polojenietoetejko
             //{
             //    chatHistoryRCTB.Text += message;
             //}
-            chatHistoryRCTB.Text += message;
+            chatHistoryRCTB.AppendText(message + "\n");
         }
     }
 }

@@ -96,7 +96,7 @@ namespace polojenietoetejko
                         ClientManager.Instance.RemoveClient(client.Username);
                         break;
                     }
-                    if (message.Equals("PING"))
+                    else if (message.Equals("PING"))
                     {
                         lastHeartbeat[client] = DateTime.Now;
                         Console.WriteLine($"Received: {client.Username}");
@@ -104,11 +104,12 @@ namespace polojenietoetejko
                     else
                     {
                         //form.UpdateChatBox($"{DateTime.Now:HH:mm} {client.Username}: {message}");
-                        SendMessageToClient(client,$"{client.iPAddress} {message} SENT");
+                        //SendMessageToClient(client,$"{client.iPAddress} {message} SENT");
+                        BroadcastMessage(client,message);
                     }
                 }
             }
-            catch(Exception)
+            catch(Exception e)
             {
                 ClientManager.Instance.RemoveClient(client.Username);
                 throw;
@@ -127,7 +128,22 @@ namespace polojenietoetejko
                 Console.WriteLine(e.Message);
             }
         }
-        
+        private void BroadcastMessage(Client sender, string message)
+        {
+            foreach(var client in ClientManager.Instance.GetClients())
+            {
+                try
+                {
+                    byte[] data = Encoding.UTF8.GetBytes($"{sender.Username}: {message}");
+                    client.UserClient.GetStream().WriteAsync(data, 0, data.Length);
+                    Console.WriteLine($"{sender.Username}: {message}");
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine($"{client.Username} failed to receive message! {e.Message}");
+                }
+            }
+        }
         private void HeartbeatCheck(object sender, ElapsedEventArgs e)
         {
             foreach(var kvp in lastHeartbeat)
