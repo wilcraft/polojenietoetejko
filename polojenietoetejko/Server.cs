@@ -45,7 +45,9 @@ namespace polojenietoetejko
             try
             {
                 listener.Start();
+                ServerDiscovery.StartDiscoveryServer(remoteEndPoint.Address,remoteEndPoint.Port);
                 Console.WriteLine($"Server Started at: {this.address}:{this.port}");
+                Console.WriteLine($"Discovery Server listening on: {ServerDiscovery.DiscoveryPort} UDP!");
 
                 while (true)
                 {

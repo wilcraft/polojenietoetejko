@@ -18,7 +18,7 @@ namespace polojenietoetejko
             testform.FormBorderStyle = FormBorderStyle.FixedDialog;
             testform.MaximizeBox = false;
             testform.MinimizeBox = false;
-            testform.ClientSize = new Size(240, 210);
+            testform.ClientSize = new Size(300, 320);
         }
         public async void ButtonClick(object sender, EventArgs e)
         {

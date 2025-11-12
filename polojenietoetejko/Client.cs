@@ -122,7 +122,6 @@ namespace polojenietoetejko
                     {
                         onMessageReceived($"{DateTime.Now:HH:mm} {message}");
                     }
-                    //form.UpdateChatBox();
 
                 }
                 catch (IOException e)
