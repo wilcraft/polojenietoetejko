@@ -1,7 +1,9 @@
-﻿using System;
+﻿using polojenietoetejko.Helper;
+using System;
 using System.CodeDom.Compiler;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -10,7 +12,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
-namespace polojenietoetejko
+namespace polojenietoetejko.Core
 {
     internal class Server
     {
@@ -23,7 +25,7 @@ namespace polojenietoetejko
         public Server(string ipAddress, Form1 form)
         {
             string defaultIP = "0.0.0.0:25565";
-            if (string.IsNullOrEmpty(ipAddress))
+            if (string.IsNullOrEmpty(ipAddress) || ipAddress == ":")
             {
                 ipAddress = defaultIP;
             }
@@ -88,13 +90,14 @@ namespace polojenietoetejko
             {
                 while (client.UserClient.Connected)
                 {
-                    int bytesRead = await client.UserClient.GetStream().ReadAsync(buffer,0,buffer.Length);
-                    string message = Encoding.UTF8.GetString(buffer,0, bytesRead);
+                    int bytesRead = await client.UserClient.GetStream().ReadAsync(buffer, 0, buffer.Length);
+                    string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
                     if (message == null || message.Equals("DISCONNECT"))
                     {
                         Console.WriteLine($"{client.Username} Disconnected");
                         Console.WriteLine($"Sending DISCONNECT to {client.iPAddress}");
                         SendMessageToClient(client, message);
+                        BroadcastMessage($"{client.Username} has left the chat room!");
                         ClientManager.Instance.RemoveClient(client.Username);
                         break;
                     }
@@ -102,12 +105,16 @@ namespace polojenietoetejko
                     {
                         lastHeartbeat[client] = DateTime.Now;
                         Console.WriteLine($"Received: {client.Username}");
+                    } else if (message.Equals("USERLIST_REQUEST"))
+                    {
+                        string[] users = ClientManager.Instance.GetClients().Select(u => u.Username).ToArray();
+                        string response = $"USERLIST:{string.Join(",", users)}";
+                        byte[] data = Encoding.UTF8.GetBytes(response);
+                        await client.UserClient.GetStream().WriteAsync(data, 0, data.Length);
                     }
                     else
                     {
-                        //form.UpdateChatBox($"{DateTime.Now:HH:mm} {client.Username}: {message}");
-                        //SendMessageToClient(client,$"{client.iPAddress} {message} SENT");
-                        BroadcastMessage(client,message);
+                        BroadcastMessage(client, message);
                     }
                 }
             }
@@ -136,11 +143,27 @@ namespace polojenietoetejko
             {
                 try
                 {
-                    byte[] data = Encoding.UTF8.GetBytes($"{sender.Username}: {message}");
+                    byte[] data = Encoding.UTF8.GetBytes($"{sender.Username} -> {message}");
                     client.UserClient.GetStream().WriteAsync(data, 0, data.Length);
-                    Console.WriteLine($"{sender.Username}: {message}");
+                    //Console.WriteLine($"{sender.Username}: {message}");
                 }
                 catch(Exception e)
+                {
+                    Console.WriteLine($"{client.Username} failed to receive message! {e.Message}");
+                }
+            }
+        }
+        private void BroadcastMessage(string message)
+        {
+            foreach (var client in ClientManager.Instance.GetClients())
+            {
+                try
+                {
+                    byte[] data = Encoding.UTF8.GetBytes($"{message}");
+                    client.UserClient.GetStream().WriteAsync(data, 0, data.Length);
+                    Console.WriteLine($"{message}");
+                }
+                catch (Exception e)
                 {
                     Console.WriteLine($"{client.Username} failed to receive message! {e.Message}");
                 }

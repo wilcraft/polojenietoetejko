@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.DirectoryServices;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
@@ -9,10 +10,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using Timer = System.Timers.Timer;
 
 
-namespace polojenietoetejko
+namespace polojenietoetejko.Core
 {
     internal class Client
     {
@@ -23,7 +25,9 @@ namespace polojenietoetejko
         private TcpClient client;
         private IPAddress address;
         private Timer heartbeatClientsideTimer;
-        public event Action<string> MessageReceived;
+        public event Action<string> MessageReceived = delegate { };
+        public event Action<string[]> UserListReceived = delegate { };
+        public event Action ClientDisconnected = delegate { };
         internal Client(string username, TcpClient client, IPAddress address)
         {
             this.username = username;
@@ -81,6 +85,7 @@ namespace polojenietoetejko
                         Initialize(username, client, GetAddress());
                         //Instance.MessageReceived += text =>
                         _ = Task.Run(() => Instance.ReadMessageAsync());
+                        await Instance.RequestUserlist();
                     }
                     else
                     {
@@ -99,8 +104,10 @@ namespace polojenietoetejko
             this.heartbeatClientsideTimer.Close();
             this.client.Close();
             this.Reset();
+            ClientDisconnected?.Invoke();
         }
-        protected void onMessageReceived(string text) => MessageReceived.Invoke(text);
+        protected void onMessageReceived(string text) => MessageReceived?.Invoke(text);
+
         public async Task ReadMessageAsync()
         {
             NetworkStream stream = this.client.GetStream();
@@ -118,9 +125,15 @@ namespace polojenietoetejko
                     if (message.Equals("DISCONNECT"))
                     {
                         this.DisconnectClient();
-                    }else if (!message.Equals("PING"))
+                    }
+                    else if (message.StartsWith("USERLIST:"))
                     {
-                        onMessageReceived($"{DateTime.Now:HH:mm} {message}");
+                        string[] users = message.Substring("USERLIST:".Length).Split(',');
+                        UserListReceived?.Invoke(users);
+                    }
+                    else if (!message.Equals("PING"))
+                    {
+                        onMessageReceived($"<{DateTime.Now:HH:mm}> {message}");
                     }
 
                 }
@@ -140,7 +153,7 @@ namespace polojenietoetejko
             }
             
         }
-        public void PingServer(object sender, ElapsedEventArgs e)
+        private void PingServer(object sender, ElapsedEventArgs e)
         {
             try
             {
@@ -152,6 +165,11 @@ namespace polojenietoetejko
             {
                 heartbeatClientsideTimer.Stop();
             }
+        }
+        private async Task RequestUserlist()
+        {
+            byte[] message = Encoding.UTF8.GetBytes("USERLIST_REQUEST");
+            await this.client.GetStream().WriteAsync(message, 0, message.Length);
         }
         public string Username { get { return username; } }
         public TcpClient UserClient { get { return client; } }

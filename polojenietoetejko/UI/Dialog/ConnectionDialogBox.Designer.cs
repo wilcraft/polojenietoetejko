@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             ContinueButton = new Button();
             CancelButton = new Button();
             usernameTextbox = new TextBox();
@@ -38,14 +39,18 @@
             connectionTP = new TabPage();
             serverListTabPage = new TabPage();
             serverListbox = new ListBox();
+            errorProvider1 = new ErrorProvider(components);
+            label1 = new Label();
             cbdTabControl.SuspendLayout();
             connectionTP.SuspendLayout();
             serverListTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)errorProvider1).BeginInit();
             SuspendLayout();
             // 
             // ContinueButton
             // 
             ContinueButton.DialogResult = DialogResult.OK;
+            ContinueButton.Enabled = false;
             ContinueButton.Location = new Point(3, 291);
             ContinueButton.Name = "ContinueButton";
             ContinueButton.Size = new Size(73, 26);
@@ -63,20 +68,25 @@
             CancelButton.TabIndex = 1;
             CancelButton.Text = "Cancel";
             CancelButton.UseVisualStyleBackColor = true;
+            CancelButton.Click += CancelButton_Click;
             // 
             // usernameTextbox
             // 
             usernameTextbox.Location = new Point(6, 31);
             usernameTextbox.Name = "usernameTextbox";
+            usernameTextbox.PlaceholderText = "Insert your username...";
             usernameTextbox.Size = new Size(254, 23);
             usernameTextbox.TabIndex = 2;
+            usernameTextbox.TextChanged += usernameTextbox_TextChanged;
             // 
             // connectionTextbox
             // 
             connectionTextbox.Location = new Point(6, 170);
             connectionTextbox.Name = "connectionTextbox";
+            connectionTextbox.PlaceholderText = "Address:Port | Example: 127.0.0.1:25565";
             connectionTextbox.Size = new Size(254, 23);
             connectionTextbox.TabIndex = 3;
+            connectionTextbox.TextChanged += connectionTextbox_TextChanged;
             // 
             // connectionLabel
             // 
@@ -109,6 +119,7 @@
             // 
             // connectionTP
             // 
+            connectionTP.Controls.Add(label1);
             connectionTP.Controls.Add(connectionTextbox);
             connectionTP.Controls.Add(usernameLabel);
             connectionTP.Controls.Add(connectionLabel);
@@ -141,6 +152,19 @@
             serverListbox.TabIndex = 0;
             serverListbox.SelectedIndexChanged += serverListbox_SelectedIndexChanged;
             // 
+            // errorProvider1
+            // 
+            errorProvider1.ContainerControl = this;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(6, 196);
+            label1.Name = "label1";
+            label1.Size = new Size(269, 45);
+            label1.TabIndex = 6;
+            label1.Text = "You can either provide an IP address and port\r\n that you know is hosting a server, \r\nor you can select a LAN server from the server list.";
+            // 
             // ConnectionDialogBox
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -154,6 +178,7 @@
             connectionTP.ResumeLayout(false);
             connectionTP.PerformLayout();
             serverListTabPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)errorProvider1).EndInit();
             ResumeLayout(false);
         }
 
@@ -169,5 +194,7 @@
         private TabPage connectionTP;
         private TabPage serverListTabPage;
         private ListBox serverListbox;
+        private ErrorProvider errorProvider1;
+        private Label label1;
     }
 }

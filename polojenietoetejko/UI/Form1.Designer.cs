@@ -28,30 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            button1 = new Button();
             ConsoleButton = new Button();
-            tabControl1 = new TabControl();
-            tabPage1 = new TabPage();
-            chatHistoryRCTB = new RichTextBox();
-            messageBox = new TextBox();
+            TabPagesController = new TabControl();
+            homePage = new TabPage();
+            button1 = new Button();
             tabPage2 = new TabPage();
             label5 = new Label();
             button2 = new Button();
             label4 = new Label();
-            tabControl1.SuspendLayout();
-            tabPage1.SuspendLayout();
+            TabPagesController.SuspendLayout();
+            homePage.SuspendLayout();
             tabPage2.SuspendLayout();
             SuspendLayout();
-            // 
-            // button1
-            // 
-            button1.Location = new Point(400, 311);
-            button1.Name = "button1";
-            button1.Size = new Size(75, 23);
-            button1.TabIndex = 0;
-            button1.Text = "Connect";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += ButtonClick;
             // 
             // ConsoleButton
             // 
@@ -63,44 +51,36 @@
             ConsoleButton.UseVisualStyleBackColor = true;
             ConsoleButton.Click += ConsoleButtonClick;
             // 
-            // tabControl1
+            // TabPagesController
             // 
-            tabControl1.Controls.Add(tabPage1);
-            tabControl1.Controls.Add(tabPage2);
-            tabControl1.Location = new Point(12, 21);
-            tabControl1.Name = "tabControl1";
-            tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(776, 417);
-            tabControl1.TabIndex = 5;
+            TabPagesController.Controls.Add(homePage);
+            TabPagesController.Controls.Add(tabPage2);
+            TabPagesController.Location = new Point(12, 21);
+            TabPagesController.Name = "TabPagesController";
+            TabPagesController.SelectedIndex = 0;
+            TabPagesController.Size = new Size(776, 417);
+            TabPagesController.TabIndex = 5;
             // 
-            // tabPage1
+            // homePage
             // 
-            tabPage1.Controls.Add(chatHistoryRCTB);
-            tabPage1.Controls.Add(messageBox);
-            tabPage1.Controls.Add(button1);
-            tabPage1.Location = new Point(4, 24);
-            tabPage1.Name = "tabPage1";
-            tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(768, 389);
-            tabPage1.TabIndex = 0;
-            tabPage1.Text = "tabPage1";
-            tabPage1.UseVisualStyleBackColor = true;
+            homePage.Controls.Add(button1);
+            homePage.Location = new Point(4, 24);
+            homePage.Name = "homePage";
+            homePage.Padding = new Padding(3);
+            homePage.Size = new Size(768, 389);
+            homePage.TabIndex = 0;
+            homePage.Text = "Home";
+            homePage.UseVisualStyleBackColor = true;
             // 
-            // chatHistoryRCTB
+            // button1
             // 
-            chatHistoryRCTB.Location = new Point(363, 54);
-            chatHistoryRCTB.Name = "chatHistoryRCTB";
-            chatHistoryRCTB.Size = new Size(100, 96);
-            chatHistoryRCTB.TabIndex = 5;
-            chatHistoryRCTB.Text = "";
-            // 
-            // messageBox
-            // 
-            messageBox.Location = new Point(363, 185);
-            messageBox.Name = "messageBox";
-            messageBox.Size = new Size(100, 23);
-            messageBox.TabIndex = 4;
-            messageBox.KeyDown += EnterKeydown;
+            button1.Location = new Point(300, 153);
+            button1.Name = "button1";
+            button1.Size = new Size(132, 61);
+            button1.TabIndex = 9;
+            button1.Text = "Connect";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += ButtonClick;
             // 
             // tabPage2
             // 
@@ -149,28 +129,31 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(tabControl1);
+            Controls.Add(TabPagesController);
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "Form1";
-            Text = "Form1";
-            tabControl1.ResumeLayout(false);
-            tabPage1.ResumeLayout(false);
-            tabPage1.PerformLayout();
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Chat App";
+            TabPagesController.ResumeLayout(false);
+            homePage.ResumeLayout(false);
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
-
-        private Button button1;
         private Button ConsoleButton;
-        private TabControl tabControl1;
-        private TabPage tabPage1;
+        private TabControl TabPagesController;
+        private TabPage homePage;
         private TabPage tabPage2;
         private Label label4;
         private Label label5;
         private Button button2;
+        private Button button1;
         private TextBox messageBox;
         private RichTextBox chatHistoryRCTB;
+        private TableLayoutPanel tableLayoutPanel1;
+        private ListBox listBox1;
     }
 }
